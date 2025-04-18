@@ -29,7 +29,8 @@ from airflow.decorators import dag, task, task_group
 # from modules.airflow_connections import _get_minio_connection
 # from airc.modules.airflow_connections import _get_minio_connection
 from airc.modules.data_processing import *
-
+from airc.modules.airflow_connections import *
+from airc.modules.airflow_connections import get_postgres_connection
 # MinIO buckets
 
 
@@ -339,12 +340,24 @@ def canada_housing():
         df = df[df.Price >= 50_000]
         
         OUTPUT_PATH = "/tmp/s5_final.csv"
+        # cleaned_data_path = "/home/aircsrv5/Quan/DataOps/Data-for-testing/canada-house-price/archive-2/cleaned_canada.csv"
+        # POSTGRES_TABLE_NAME = "canada_housing_final"
         df.to_csv(OUTPUT_PATH, index=False)
-        put_file_to_minio(BUCKET_NAME, 
+        
+        # engine = get_postgres_connection(db_name="formatted_zone",
+        #                                 user="airc",
+        #                                 password="admin",
+        #                                 host="192.168.88.146",
+        #                                 port=5432)
+        # df = pd.read_csv(cleaned_data_path)
+        
+        # df.to_sql(POSTGRES_TABLE_NAME, engine, if_exists='replace', index=False)
+        
+        put_file_to_minio(BUCKET_NAME,
                 FINAL_OBJECT_PATH + "/s5_final.csv", 
                 OUTPUT_PATH)
         return 0
-    
+
     task_1 = test_minio_connection()
     task_2 = merge_all_provinces()
     task_3 = remove_unused_records_and_attributes()

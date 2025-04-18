@@ -35,8 +35,8 @@ def minio_object_to_dataframe(minio_object):
 
 def minio_object_to_dataframe_with_column(minio_object, columns_to_read: List):
     df = pd.read_csv(io.BytesIO(minio_object.read()), 
-                     usecols=columns_to_read,
-                     low_memory=False)
+                    usecols=columns_to_read,
+                    low_memory=False)
     return df
 
 def drop_duplicate_row(df: pd.DataFrame):
